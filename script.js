@@ -14,11 +14,13 @@ const RATE_PER_HOUR = {
   homehelp: 125
 };
 
-const SA_PHONE = '27105001234';
+const SA_PHONE = '27612252597';
 
 document.getElementById('year').textContent = new Date().getFullYear();
 
-document.getElementById('whatsappLink').href = `https://wa.me/${SA_PHONE}?text=${encodeURIComponent('Hi Home and Family Care, I want to book a household service.')}`;
+const whatsappText = 'Hi Home and Family Care, I want to request a quote for a household service.';
+document.getElementById('whatsappLink').href = `https://wa.me/${SA_PHONE}?text=${encodeURIComponent(whatsappText)}`;
+document.getElementById('heroWhatsappLink').href = `https://wa.me/${SA_PHONE}?text=${encodeURIComponent(whatsappText)}`;
 
 function readStore(key) {
   return JSON.parse(localStorage.getItem(key) || '[]');
@@ -65,7 +67,7 @@ bookingForm.addEventListener('submit', (e) => {
   bookings.push({ name, service, city, estimate, timestamp: new Date().toISOString() });
   writeStore('bookings', bookings);
 
-  bookingMsg.textContent = `Thanks ${name}. Your request was submitted with an estimate of R${estimate}.`;
+  bookingMsg.textContent = `Thanks ${name}. Your guide price is R${estimate}. We will confirm the final quote after checking the job details.`;
   bookingMsg.style.color = '#0f766e';
 
   bookingForm.reset();

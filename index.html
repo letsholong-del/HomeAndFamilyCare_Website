@@ -29,6 +29,7 @@
       </p>
       <div class="hero-actions">
         <a href="#booking" class="btn">Request a Service</a>
+        <a id="heroWhatsappLink" href="#" class="btn btn-secondary" target="_blank" rel="noopener">Chat on WhatsApp</a>
         <a href="#join" class="btn btn-secondary">Apply as a Helper</a>
       </div>
       <div class="badges">
@@ -63,7 +64,7 @@
 
     <section id="booking" class="section wrap">
       <h2>Book a Service</h2>
-      <p class="sub">This form calculates an estimated price in ZAR and saves the lead locally for demo purposes.</p>
+      <p class="sub">Use the form for a guide price. We confirm the final quote after checking the service details, suburb, date and availability.</p>
       <form id="bookingForm" class="form-grid">
         <input type="text" name="name" placeholder="Full name" required />
         <input type="tel" name="phone" placeholder="Phone number" required />
@@ -109,9 +110,9 @@
       </form>
 
       <div id="estimateCard" class="card estimate hidden" aria-live="polite">
-        <h3>Estimated Price</h3>
+        <h3>Guide Price</h3>
         <p id="estimateValue" class="price-tag"></p>
-        <small>Final price may vary by suburb, supplies and availability.</small>
+        <small>Final quote may vary by suburb, supplies, urgency and availability.</small>
       </div>
 
       <p id="bookingMsg" class="msg"></p>
@@ -172,7 +173,10 @@
   <footer>
     <div class="wrap footer-wrap">
       <p>&copy; <span id="year"></span> Home and Family Care</p>
-      <a id="whatsappLink" href="#" class="wa-link" target="_blank" rel="noopener">Chat on WhatsApp</a>
+      <div class="footer-contact">
+        <a id="whatsappLink" href="#" class="wa-link" target="_blank" rel="noopener">WhatsApp: 061 225 2597</a>
+        <a href="mailto:letsholong@gmail.com" class="wa-link">letsholong@gmail.com</a>
+      </div>
     </div>
   </footer>
 

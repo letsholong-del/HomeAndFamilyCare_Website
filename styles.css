@@ -131,6 +131,12 @@ footer {
   flex-wrap: wrap;
 }
 
+.footer-contact {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
 .wa-link {
   color: #86efac;
   text-decoration: none;
