@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home and Family Care | Book Trusted Household Helpers</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="hero">
+    <nav class="nav wrap">
+      <div class="logo">Home & Family <span>Care</span></div>
+      <div class="nav-links">
+        <a href="#services">Services</a>
+        <a href="#booking">Booking</a>
+        <a href="#join">Helpers</a>
+        <a href="#ops">Operations</a>
+      </div>
+      <a class="btn btn-small" href="#booking">Book Now</a>
+    </nav>
+
+    <div class="wrap hero-content">
+      <h1>Home and Family Care for Cleaning, Gardening, Babysitting & Household Help</h1>
+      <p>
+        Start your business faster with a practical, conversion-focused website template designed for Johannesburg, Cape Town, Durban and Pretoria.
+      </p>
+      <div class="hero-actions">
+        <a href="#booking" class="btn">Request a Service</a>
+        <a href="#join" class="btn btn-secondary">Apply as a Helper</a>
+      </div>
+      <div class="badges">
+        <span>Verified helper workflow</span>
+        <span>POPIA consent fields</span>
+        <span>WhatsApp contact CTA</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="services" class="section wrap">
+      <h2>Services You Can Offer</h2>
+      <div class="grid cards-4">
+        <article class="card"><h3>Home Cleaning</h3><p>One-time, weekly or deep-clean packages.</p></article>
+        <article class="card"><h3>Gardening</h3><p>Lawn, hedge trimming, and maintenance plans.</p></article>
+        <article class="card"><h3>Babysitting</h3><p>Day, evening and ad-hoc babysitter requests.</p></article>
+        <article class="card"><h3>General Home Help</h3><p>Laundry, ironing, meal prep and errands.</p></article>
+      </div>
+    </section>
+
+    <section class="section alt" id="how">
+      <div class="wrap">
+        <h2>How the Platform Works</h2>
+        <div class="grid cards-3">
+          <article class="card"><h3>1. Customer request</h3><p>Customer submits service, city, date and duration.</p></article>
+          <article class="card"><h3>2. Helper matching</h3><p>You assign available nearby helpers.</p></article>
+          <article class="card"><h3>3. Job completion</h3><p>Customer confirms, then rates service quality.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="booking" class="section wrap">
+      <h2>Book a Service</h2>
+      <p class="sub">This form calculates an estimated price in ZAR and saves the lead locally for demo purposes.</p>
+      <form id="bookingForm" class="form-grid">
+        <input type="text" name="name" placeholder="Full name" required />
+        <input type="tel" name="phone" placeholder="Phone number" required />
+
+        <select name="service" required>
+          <option value="">Select service</option>
+          <option value="cleaning">Home Cleaning</option>
+          <option value="gardening">Gardening</option>
+          <option value="babysitting">Babysitting</option>
+          <option value="homehelp">General Home Help</option>
+        </select>
+
+        <select name="city" required>
+          <option value="">Select city</option>
+          <option>Johannesburg</option>
+          <option>Cape Town</option>
+          <option>Durban</option>
+          <option>Pretoria</option>
+        </select>
+
+        <input type="date" name="date" required />
+
+        <select name="hours" required>
+          <option value="">Duration</option>
+          <option value="2">2 hours</option>
+          <option value="3">3 hours</option>
+          <option value="4">4 hours</option>
+          <option value="6">6 hours</option>
+          <option value="8">8 hours</option>
+        </select>
+
+        <label class="checkline">
+          <input type="checkbox" name="urgent" />
+          Urgent request (same-day priority)
+        </label>
+
+        <label class="checkline full">
+          <input type="checkbox" name="consent" required />
+          I agree to data processing in line with POPIA and accept service terms.
+        </label>
+
+        <button type="submit" class="btn full">Calculate & Submit</button>
+      </form>
+
+      <div id="estimateCard" class="card estimate hidden" aria-live="polite">
+        <h3>Estimated Price</h3>
+        <p id="estimateValue" class="price-tag"></p>
+        <small>Final price may vary by suburb, supplies and availability.</small>
+      </div>
+
+      <p id="bookingMsg" class="msg"></p>
+    </section>
+
+    <section id="join" class="section alt">
+      <div class="wrap">
+        <h2>Become a Helper</h2>
+        <form id="helperForm" class="form-grid">
+          <input type="text" name="helperName" placeholder="Full name" required />
+          <input type="email" name="helperEmail" placeholder="Email" required />
+          <input type="tel" name="helperPhone" placeholder="Phone" required />
+
+          <select name="helperType" required>
+            <option value="">Primary skill</option>
+            <option>Cleaner</option>
+            <option>Gardener</option>
+            <option>Babysitter</option>
+            <option>General Helper</option>
+          </select>
+
+          <input type="text" name="helperArea" placeholder="Area / Suburb" required />
+
+          <select name="experience" required>
+            <option value="">Experience</option>
+            <option>0-1 years</option>
+            <option>2-4 years</option>
+            <option>5+ years</option>
+          </select>
+
+          <label class="checkline full">
+            <input type="checkbox" name="backgroundConsent" required />
+            I consent to reference and background checks.
+          </label>
+
+          <button type="submit" class="btn btn-secondary full">Apply as Helper</button>
+        </form>
+        <p id="helperMsg" class="msg"></p>
+      </div>
+    </section>
+
+    <section id="ops" class="section wrap">
+      <h2>Operations Snapshot (Demo)</h2>
+      <p class="sub">Recent booking and helper leads saved in your browser.</p>
+      <div class="grid cards-2">
+        <article class="card">
+          <h3>Recent Booking Leads</h3>
+          <ul id="bookingLeads" class="lead-list"></ul>
+        </article>
+        <article class="card">
+          <h3>Recent Helper Applications</h3>
+          <ul id="helperLeads" class="lead-list"></ul>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-wrap">
+      <p>&copy; <span id="year"></span> Home and Family Care</p>
+      <a id="whatsappLink" href="#" class="wa-link" target="_blank" rel="noopener">Chat on WhatsApp</a>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
