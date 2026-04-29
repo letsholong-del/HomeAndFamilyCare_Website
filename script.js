@@ -9,22 +9,19 @@ const sendHelperWhatsapp = document.getElementById('sendHelperWhatsapp');
 const menuToggle = document.querySelector('.menu-toggle');
 const navLinks = document.getElementById('navLinks');
 
-const RATE_PER_HOUR = {
-  cleaning: 140,
-  gardening: 160,
-  babysitting: 95,
-  homehelp: 125
-};
+const CLEANING_MINIMUM = 300;
+const CLEANING_HOURLY_RATE = 150;
+const URGENT_FEE = 100;
+const SUPPLIES_FEE = 90;
 
 const SERVICE_LABELS = {
-  cleaning: 'Home Cleaning',
-  gardening: 'Gardening',
-  babysitting: 'Babysitting',
-  homehelp: 'General Home Help'
+  'cleaning-once': 'Once-Off Home Cleaning',
+  'cleaning-recurring': 'Recurring Home Cleaning',
+  babysitting: 'Babysitting Quote'
 };
 
 const SA_PHONE = '27612252597';
-const BASE_WHATSAPP_TEXT = 'Hi Home and Family Care, I want to request a quote for a household service.';
+const BASE_WHATSAPP_TEXT = 'Hi Home and Family Care, I want to request a quote for home cleaning or babysitting.';
 
 function whatsappUrl(message) {
   return `https://wa.me/${SA_PHONE}?text=${encodeURIComponent(message)}`;
@@ -43,14 +40,29 @@ function setStaticWhatsappLinks() {
   });
 }
 
+function isCleaningService(service) {
+  return service === 'cleaning-once' || service === 'cleaning-recurring';
+}
+
 function calculateEstimate(service, hours, urgent, supplies) {
-  const base = (RATE_PER_HOUR[service] || 120) * Number(hours);
-  const urgentFee = urgent ? 80 : 0;
-  const suppliesFee = supplies === 'helper' ? 70 : 0;
+  if (!isCleaningService(service)) return null;
+  const base = Math.max(CLEANING_MINIMUM, CLEANING_HOURLY_RATE * Number(hours || 0));
+  const urgentFee = urgent ? URGENT_FEE : 0;
+  const suppliesFee = supplies === 'helper' ? SUPPLIES_FEE : 0;
   return base + urgentFee + suppliesFee;
 }
 
+function formatSupplies(value) {
+  if (value === 'helper') return 'Please include supplies';
+  if (value === 'not-applicable') return 'Not applicable';
+  return 'I provide supplies';
+}
+
 function buildBookingMessage(data, estimate) {
+  const priceLine = estimate
+    ? `Guide cleaning price shown: R${estimate}`
+    : 'Pricing: Babysitting requires a custom quotation.';
+
   return [
     'Hi Home and Family Care, I want to request a quote.',
     '',
@@ -61,9 +73,10 @@ function buildBookingMessage(data, estimate) {
     `Suburb: ${data.suburb}`,
     `Preferred date: ${data.date}`,
     `Duration: ${data.hours} hours`,
-    `Supplies: ${data.supplies === 'helper' ? 'Please include supplies' : 'I provide supplies'}`,
+    `Supplies: ${formatSupplies(data.supplies)}`,
     `Urgent: ${data.urgent ? 'Yes' : 'No'}`,
-    `Guide price shown: R${estimate}`,
+    `Details: ${data.details}`,
+    priceLine,
     '',
     'Please confirm the final quote and availability.'
   ].join('\n');
@@ -80,8 +93,20 @@ function readBookingForm() {
     date: String(formData.get('date') || ''),
     hours: Number(formData.get('hours') || 0),
     supplies: String(formData.get('supplies') || 'customer'),
+    details: String(formData.get('details') || '').trim(),
     urgent: Boolean(formData.get('urgent'))
   };
+}
+
+function updateFormHints() {
+  const service = bookingForm.elements.service.value;
+  const supplies = bookingForm.elements.supplies;
+
+  if (service === 'babysitting') {
+    supplies.value = 'not-applicable';
+  } else if (supplies.value === 'not-applicable') {
+    supplies.value = 'customer';
+  }
 }
 
 bookingForm.addEventListener('submit', (event) => {
@@ -91,10 +116,12 @@ bookingForm.addEventListener('submit', (event) => {
   const message = buildBookingMessage(data, estimate);
 
   estimateCard.classList.remove('hidden');
-  estimateValue.textContent = `R${estimate}`;
+  estimateValue.textContent = estimate ? `R${estimate}` : 'Quotation required';
   sendWhatsappRequest.href = whatsappUrl(message);
   sendWhatsappRequest.classList.remove('hidden');
-  bookingMsg.textContent = 'Guide price calculated. Send the request on WhatsApp so we can confirm the final quote.';
+  bookingMsg.textContent = estimate
+    ? 'Guide cleaning price prepared. Send the request on WhatsApp so we can confirm the final quote.'
+    : 'Babysitting request prepared. Send it on WhatsApp so we can quote based on your family details.';
 });
 
 helperForm.addEventListener('submit', (event) => {
@@ -128,9 +155,14 @@ document.querySelectorAll('[data-service-link]').forEach((link) => {
   link.addEventListener('click', () => {
     const service = link.getAttribute('data-service-link');
     const select = bookingForm.elements.service;
-    if (select) select.value = service;
+    if (select) {
+      select.value = service;
+      updateFormHints();
+    }
   });
 });
+
+bookingForm.elements.service.addEventListener('change', updateFormHints);
 
 menuToggle.addEventListener('click', () => {
   const isOpen = navLinks.classList.toggle('open');

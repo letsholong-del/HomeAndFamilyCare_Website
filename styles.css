@@ -186,6 +186,12 @@ p { line-height: 1.65; }
 .cards-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .cards-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 
+.service-panels {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
 .service-card, .price-card, .step-card, .booking-card, .helper-card, details {
   background: var(--white);
   border: 1px solid var(--line);
@@ -198,6 +204,34 @@ p { line-height: 1.65; }
   color: var(--brand);
   font-weight: 800;
   text-decoration: none;
+}
+.service-feature {
+  min-height: 100%;
+  padding: 1.35rem;
+}
+.service-detail-list {
+  display: grid;
+  gap: .55rem;
+  margin: 1rem 0;
+  padding: 0;
+  list-style: none;
+}
+.service-detail-list li {
+  position: relative;
+  padding-left: 1.2rem;
+  color: #40505b;
+  font-weight: 700;
+  line-height: 1.45;
+}
+.service-detail-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .62em;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--brand);
 }
 
 .icon {
@@ -218,6 +252,7 @@ p { line-height: 1.65; }
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1rem;
 }
+.pricing-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .price-card span {
   color: var(--muted);
   font-weight: 700;
@@ -233,6 +268,63 @@ p { line-height: 1.65; }
   color: #4a5964;
   font-weight: 700;
 }
+
+.difference-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+.difference-grid article {
+  min-height: 100%;
+  padding: 1.15rem;
+  border: 1px solid rgba(15, 118, 110, .18);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(15, 32, 42, .04);
+}
+.difference-grid span {
+  display: inline-flex;
+  margin-bottom: .75rem;
+  color: var(--brand);
+  font-weight: 900;
+  font-size: .82rem;
+}
+.difference-grid p {
+  margin-bottom: 0;
+  color: var(--muted);
+}
+.promise-band {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding: 1.2rem;
+  border-radius: 8px;
+  background: #0f172a;
+  color: #fff;
+}
+.promise-band span {
+  display: block;
+  margin-bottom: .35rem;
+  color: #86efac;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-size: .76rem;
+}
+.promise-band strong {
+  display: block;
+  font-size: clamp(1.05rem, 2vw, 1.45rem);
+  line-height: 1.25;
+}
+.promise-band .btn {
+  flex: 0 0 auto;
+  background: #fff;
+  color: #0f172a;
+  box-shadow: none;
+}
+.promise-band .btn:hover { background: #eaf5f3; }
 
 .split {
   display: grid;
@@ -302,7 +394,7 @@ label {
   font-weight: 800;
   font-size: .92rem;
 }
-input, select, button {
+input, select, textarea, button {
   width: 100%;
   min-height: 46px;
   padding: .75rem .85rem;
@@ -312,7 +404,8 @@ input, select, button {
   color: var(--text);
   font: inherit;
 }
-input:focus, select:focus {
+textarea { resize: vertical; }
+input:focus, select:focus, textarea:focus {
   outline: 3px solid rgba(15, 118, 110, .18);
   border-color: var(--brand);
 }
@@ -400,7 +493,7 @@ footer p { margin: 0; color: #b9c7d1; }
 @media (max-width: 980px) {
   .hero-grid, .booking-section, .split, .helper-grid { grid-template-columns: 1fr; }
   .booking-copy { position: static; }
-  .cards-4, .pricing-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cards-4, .pricing-grid, .pricing-grid-3, .difference-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .hero-media img { height: 430px; }
 }
 
@@ -433,7 +526,8 @@ footer p { margin: 0; color: #b9c7d1; }
   .nav .btn-small { display: none; }
   .hero { padding: 2.5rem 0; }
   .section { padding: 3rem 0; }
-  .cards-3, .cards-4, .pricing-grid, .trust-list, .faq-grid, .form-row, .footer-grid { grid-template-columns: 1fr; }
+  .cards-3, .cards-4, .pricing-grid, .pricing-grid-3, .service-panels, .difference-grid, .trust-list, .faq-grid, .form-row, .footer-grid { grid-template-columns: 1fr; }
+  .promise-band { flex-direction: column; align-items: stretch; }
   .hero-media { min-height: auto; }
   .hero-media img { min-height: 320px; height: 360px; }
   .hero-card { position: static; width: 100%; margin-top: .8rem; }

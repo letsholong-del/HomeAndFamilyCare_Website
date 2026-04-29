@@ -5,11 +5,12 @@ Customer-facing static website for Home and Family Care.
 ## What this site includes
 - Conversion-focused landing page
 - Custom hero image asset
-- Service descriptions for cleaning, gardening, babysitting and home help
-- Guide pricing calculator
+- Focused service descriptions for home cleaning and babysitting
+- Cleaning guide pricing from R300
+- Babysitting quotation request flow
 - WhatsApp quote handoff using `061 225 2597`
-- Helper application handoff
-- Trust, safety and FAQ content
+- Helper application handoff for cleaners and babysitters
+- Trust, safety, differentiation and FAQ content
 - GitHub Pages deployment workflow
 
 ## Public website files
