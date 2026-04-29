@@ -2,10 +2,12 @@ const bookingForm = document.getElementById('bookingForm');
 const helperForm = document.getElementById('helperForm');
 const bookingMsg = document.getElementById('bookingMsg');
 const helperMsg = document.getElementById('helperMsg');
-const bookingLeads = document.getElementById('bookingLeads');
-const helperLeads = document.getElementById('helperLeads');
 const estimateCard = document.getElementById('estimateCard');
 const estimateValue = document.getElementById('estimateValue');
+const sendWhatsappRequest = document.getElementById('sendWhatsappRequest');
+const sendHelperWhatsapp = document.getElementById('sendHelperWhatsapp');
+const menuToggle = document.querySelector('.menu-toggle');
+const navLinks = document.getElementById('navLinks');
 
 const RATE_PER_HOUR = {
   cleaning: 140,
@@ -14,83 +16,132 @@ const RATE_PER_HOUR = {
   homehelp: 125
 };
 
+const SERVICE_LABELS = {
+  cleaning: 'Home Cleaning',
+  gardening: 'Gardening',
+  babysitting: 'Babysitting',
+  homehelp: 'General Home Help'
+};
+
 const SA_PHONE = '27612252597';
+const BASE_WHATSAPP_TEXT = 'Hi Home and Family Care, I want to request a quote for a household service.';
 
-document.getElementById('year').textContent = new Date().getFullYear();
-
-const whatsappText = 'Hi Home and Family Care, I want to request a quote for a household service.';
-document.getElementById('whatsappLink').href = `https://wa.me/${SA_PHONE}?text=${encodeURIComponent(whatsappText)}`;
-document.getElementById('heroWhatsappLink').href = `https://wa.me/${SA_PHONE}?text=${encodeURIComponent(whatsappText)}`;
-
-function readStore(key) {
-  return JSON.parse(localStorage.getItem(key) || '[]');
+function whatsappUrl(message) {
+  return `https://wa.me/${SA_PHONE}?text=${encodeURIComponent(message)}`;
 }
 
-function writeStore(key, value) {
-  localStorage.setItem(key, JSON.stringify(value));
+function setStaticWhatsappLinks() {
+  [
+    'navWhatsappLink',
+    'heroWhatsappLink',
+    'contactWhatsappLink',
+    'footerWhatsappLink',
+    'floatingWhatsapp'
+  ].forEach((id) => {
+    const link = document.getElementById(id);
+    if (link) link.href = whatsappUrl(BASE_WHATSAPP_TEXT);
+  });
 }
 
-function renderLeads() {
-  const bookings = readStore('bookings').slice(-5).reverse();
-  const helpers = readStore('helpers').slice(-5).reverse();
-
-  bookingLeads.innerHTML = bookings.length
-    ? bookings.map((b) => `<li><strong>${b.name}</strong> - ${b.service} - ${b.city} - R${b.estimate}</li>`).join('')
-    : '<li>No booking leads yet.</li>';
-
-  helperLeads.innerHTML = helpers.length
-    ? helpers.map((h) => `<li><strong>${h.name}</strong> - ${h.skill} - ${h.area}</li>`).join('')
-    : '<li>No helper applications yet.</li>';
-}
-
-function calculateEstimate(service, hours, urgent) {
+function calculateEstimate(service, hours, urgent, supplies) {
   const base = (RATE_PER_HOUR[service] || 120) * Number(hours);
   const urgentFee = urgent ? 80 : 0;
-  return base + urgentFee;
+  const suppliesFee = supplies === 'helper' ? 70 : 0;
+  return base + urgentFee + suppliesFee;
 }
 
-bookingForm.addEventListener('submit', (e) => {
-  e.preventDefault();
+function buildBookingMessage(data, estimate) {
+  return [
+    'Hi Home and Family Care, I want to request a quote.',
+    '',
+    `Name: ${data.name}`,
+    `Phone: ${data.phone}`,
+    `Service: ${SERVICE_LABELS[data.service] || data.service}`,
+    `City: ${data.city}`,
+    `Suburb: ${data.suburb}`,
+    `Preferred date: ${data.date}`,
+    `Duration: ${data.hours} hours`,
+    `Supplies: ${data.supplies === 'helper' ? 'Please include supplies' : 'I provide supplies'}`,
+    `Urgent: ${data.urgent ? 'Yes' : 'No'}`,
+    `Guide price shown: R${estimate}`,
+    '',
+    'Please confirm the final quote and availability.'
+  ].join('\n');
+}
+
+function readBookingForm() {
   const formData = new FormData(bookingForm);
+  return {
+    name: String(formData.get('name') || '').trim(),
+    phone: String(formData.get('phone') || '').trim(),
+    service: String(formData.get('service') || ''),
+    city: String(formData.get('city') || ''),
+    suburb: String(formData.get('suburb') || '').trim(),
+    date: String(formData.get('date') || ''),
+    hours: Number(formData.get('hours') || 0),
+    supplies: String(formData.get('supplies') || 'customer'),
+    urgent: Boolean(formData.get('urgent'))
+  };
+}
 
-  const name = String(formData.get('name') || 'Customer');
-  const service = String(formData.get('service') || 'service');
-  const city = String(formData.get('city') || 'city');
-  const hours = Number(formData.get('hours') || 2);
-  const urgent = Boolean(formData.get('urgent'));
+bookingForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const data = readBookingForm();
+  const estimate = calculateEstimate(data.service, data.hours, data.urgent, data.supplies);
+  const message = buildBookingMessage(data, estimate);
 
-  const estimate = calculateEstimate(service, hours, urgent);
   estimateCard.classList.remove('hidden');
   estimateValue.textContent = `R${estimate}`;
-
-  const bookings = readStore('bookings');
-  bookings.push({ name, service, city, estimate, timestamp: new Date().toISOString() });
-  writeStore('bookings', bookings);
-
-  bookingMsg.textContent = `Thanks ${name}. Your guide price is R${estimate}. We will confirm the final quote after checking the job details.`;
-  bookingMsg.style.color = '#0f766e';
-
-  bookingForm.reset();
-  renderLeads();
+  sendWhatsappRequest.href = whatsappUrl(message);
+  sendWhatsappRequest.classList.remove('hidden');
+  bookingMsg.textContent = 'Guide price calculated. Send the request on WhatsApp so we can confirm the final quote.';
 });
 
-helperForm.addEventListener('submit', (e) => {
-  e.preventDefault();
+helperForm.addEventListener('submit', (event) => {
+  event.preventDefault();
   const formData = new FormData(helperForm);
-
-  const name = String(formData.get('helperName') || 'Applicant');
+  const name = String(formData.get('helperName') || 'Applicant').trim();
+  const email = String(formData.get('helperEmail') || '').trim();
+  const phone = String(formData.get('helperPhone') || '').trim();
   const skill = String(formData.get('helperType') || 'General Helper');
-  const area = String(formData.get('helperArea') || 'Unknown Area');
+  const area = String(formData.get('helperArea') || 'your area').trim();
+  const experience = String(formData.get('experience') || '');
+  const message = [
+    'Hi Home and Family Care, I want to apply as a helper.',
+    '',
+    `Name: ${name}`,
+    `Email: ${email}`,
+    `Phone: ${phone}`,
+    `Primary skill: ${skill}`,
+    `Area: ${area}`,
+    `Experience: ${experience}`,
+    '',
+    'I consent to the next screening step.'
+  ].join('\n');
 
-  const helpers = readStore('helpers');
-  helpers.push({ name, skill, area, timestamp: new Date().toISOString() });
-  writeStore('helpers', helpers);
-
-  helperMsg.textContent = `Thanks ${name}. Application received for ${skill} in ${area}.`;
-  helperMsg.style.color = '#0f766e';
-
-  helperForm.reset();
-  renderLeads();
+  sendHelperWhatsapp.href = whatsappUrl(message);
+  sendHelperWhatsapp.classList.remove('hidden');
+  helperMsg.textContent = `Thanks ${name}. Send your ${skill} application on WhatsApp so we can start the next screening step.`;
 });
 
-renderLeads();
+document.querySelectorAll('[data-service-link]').forEach((link) => {
+  link.addEventListener('click', () => {
+    const service = link.getAttribute('data-service-link');
+    const select = bookingForm.elements.service;
+    if (select) select.value = service;
+  });
+});
+
+menuToggle.addEventListener('click', () => {
+  const isOpen = navLinks.classList.toggle('open');
+  menuToggle.setAttribute('aria-expanded', String(isOpen));
+});
+
+navLinks.querySelectorAll('a').forEach((link) => {
+  link.addEventListener('click', () => {
+    navLinks.classList.remove('open');
+    menuToggle.setAttribute('aria-expanded', 'false');
+  });
+});
+
+setStaticWhatsappLinks();
