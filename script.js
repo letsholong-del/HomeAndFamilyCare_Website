@@ -8,6 +8,8 @@ const sendWhatsappRequest = document.getElementById('sendWhatsappRequest');
 const sendHelperWhatsapp = document.getElementById('sendHelperWhatsapp');
 const menuToggle = document.querySelector('.menu-toggle');
 const navLinks = document.getElementById('navLinks');
+const cleaningFields = document.querySelector('[data-cleaning-fields]');
+const babysittingFields = document.querySelector('[data-babysitting-fields]');
 
 const CLEANING_MINIMUM = 300;
 const CLEANING_HOURLY_RATE = 150;
@@ -22,6 +24,7 @@ const SERVICE_LABELS = {
 
 const SA_PHONE = '27612252597';
 const BASE_WHATSAPP_TEXT = 'Hi Home and Family Care, I want to request a quote for home cleaning or babysitting.';
+const REVIEW_WHATSAPP_TEXT = 'Hi Home and Family Care, I would like to leave a customer review.';
 
 function whatsappUrl(message) {
   return `https://wa.me/${SA_PHONE}?text=${encodeURIComponent(message)}`;
@@ -38,6 +41,9 @@ function setStaticWhatsappLinks() {
     const link = document.getElementById(id);
     if (link) link.href = whatsappUrl(BASE_WHATSAPP_TEXT);
   });
+
+  const reviewLink = document.getElementById('reviewWhatsappLink');
+  if (reviewLink) reviewLink.href = whatsappUrl(REVIEW_WHATSAPP_TEXT);
 }
 
 function isCleaningService(service) {
@@ -63,7 +69,7 @@ function buildBookingMessage(data, estimate) {
     ? `Guide cleaning price shown: R${estimate}`
     : 'Pricing: Babysitting requires a custom quotation.';
 
-  return [
+  const lines = [
     'Hi Home and Family Care, I want to request a quote.',
     '',
     `Name: ${data.name}`,
@@ -75,11 +81,33 @@ function buildBookingMessage(data, estimate) {
     `Duration: ${data.hours} hours`,
     `Supplies: ${formatSupplies(data.supplies)}`,
     `Urgent: ${data.urgent ? 'Yes' : 'No'}`,
-    `Details: ${data.details}`,
-    priceLine,
-    '',
-    'Please confirm the final quote and availability.'
-  ].join('\n');
+    `Access notes / priorities: ${data.details}`
+  ];
+
+  if (isCleaningService(data.service)) {
+    lines.push(
+      '',
+      'Cleaning details:',
+      `Home type: ${data.homeType || 'Not provided'}`,
+      `Home condition: ${data.condition || 'Not provided'}`,
+      `Bedrooms: ${data.bedrooms || 'Not provided'}`,
+      `Bathrooms: ${data.bathrooms || 'Not provided'}`,
+      `Cleaning extras: ${data.cleaningExtras || 'None listed'}`
+    );
+  }
+
+  if (data.service === 'babysitting') {
+    lines.push(
+      '',
+      'Babysitting details:',
+      `Number of children: ${data.childrenCount || 'Not provided'}`,
+      `Timing: ${data.timing || 'Not provided'}`,
+      `Child ages and duties: ${data.babysittingDetails || 'Not provided'}`
+    );
+  }
+
+  lines.push('', priceLine, '', 'Please confirm the final quote and availability.');
+  return lines.join('\n');
 }
 
 function readBookingForm() {
@@ -93,6 +121,14 @@ function readBookingForm() {
     date: String(formData.get('date') || ''),
     hours: Number(formData.get('hours') || 0),
     supplies: String(formData.get('supplies') || 'customer'),
+    homeType: String(formData.get('homeType') || ''),
+    condition: String(formData.get('condition') || ''),
+    bedrooms: String(formData.get('bedrooms') || ''),
+    bathrooms: String(formData.get('bathrooms') || ''),
+    cleaningExtras: String(formData.get('cleaningExtras') || '').trim(),
+    childrenCount: String(formData.get('childrenCount') || ''),
+    timing: String(formData.get('timing') || ''),
+    babysittingDetails: String(formData.get('babysittingDetails') || '').trim(),
     details: String(formData.get('details') || '').trim(),
     urgent: Boolean(formData.get('urgent'))
   };
@@ -107,6 +143,11 @@ function updateFormHints() {
   } else if (supplies.value === 'not-applicable') {
     supplies.value = 'customer';
   }
+
+  const cleaningSelected = isCleaningService(service) || service === '';
+  const babysittingSelected = service === 'babysitting';
+  if (cleaningFields) cleaningFields.classList.toggle('hidden', !cleaningSelected);
+  if (babysittingFields) babysittingFields.classList.toggle('hidden', !babysittingSelected);
 }
 
 bookingForm.addEventListener('submit', (event) => {
@@ -130,7 +171,7 @@ helperForm.addEventListener('submit', (event) => {
   const name = String(formData.get('helperName') || 'Applicant').trim();
   const email = String(formData.get('helperEmail') || '').trim();
   const phone = String(formData.get('helperPhone') || '').trim();
-  const skill = String(formData.get('helperType') || 'General Helper');
+  const skill = String(formData.get('helperType') || 'Helper');
   const area = String(formData.get('helperArea') || 'your area').trim();
   const experience = String(formData.get('experience') || '');
   const message = [
@@ -177,3 +218,4 @@ navLinks.querySelectorAll('a').forEach((link) => {
 });
 
 setStaticWhatsappLinks();
+updateFormHints();
